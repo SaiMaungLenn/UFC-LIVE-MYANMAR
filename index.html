@@ -237,7 +237,13 @@
     .corner.bl { bottom: 18px; left: 20px; }
     .corner.br { bottom: 18px; right: 20px; }
 
-    /* Tablet */
+    /* Reset button styles */
+    .live-btn {
+      border: none;
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+    }
     @media (min-width: 600px) {
       .container { max-width: 560px; }
       .live-btn { width: min(340px, 70vw); }
@@ -280,10 +286,14 @@
 
     <div class="divider"></div>
 
-    <a class="live-btn" href="http://139.180.156.116:8080/" target="_blank" rel="noopener">
+    <button class="live-btn" id="liveBtn" onclick="goLive()"
+      oncontextmenu="return false"
+      ontouchstart="startHold(event)"
+      ontouchend="cancelHold()"
+      ontouchmove="cancelHold()">
       <span class="live-dot"></span>
       LIVE
-    </a>
+    </button>
 
     <div class="status">
       <span class="status-dot"></span>
@@ -299,12 +309,33 @@
   </div>
 
   <script>
+    // Clock
     function updateClock() {
       document.getElementById('clock').textContent =
         new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     }
     updateClock();
     setInterval(updateClock, 1000);
+
+    // Hidden stream URL — not visible in HTML source easily
+    const _s = atob('aHR0cDovLzEzOS4xODAuMTU2LjExNjo4MDgw');
+
+    // Block right-click everywhere
+    document.addEventListener('contextmenu', e => e.preventDefault());
+
+    // Block long press showing link
+    let holdTimer;
+    function startHold(e) {
+      holdTimer = setTimeout(() => e.preventDefault(), 300);
+    }
+    function cancelHold() {
+      clearTimeout(holdTimer);
+    }
+
+    // Navigate on click
+    function goLive() {
+      window.open(_s, '_blank', 'noopener');
+    }
   </script>
 </body>
 </html>
