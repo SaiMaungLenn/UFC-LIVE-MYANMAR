@@ -484,58 +484,53 @@
   </div>
 
   <script>
-    // Stream embed URL split to avoid easy detection
-    const _p1 = 'http://139.180.';
-    const _p2 = '156.116:8080';
-    const _p3 = '/embed/video';
-    const _e = _p1 + _p2 + _p3;
+    // Encoded stream embed URL
+    const _e = atob('aHR0cDovLzEzOS4xODAuMTU2LjExNjo4MDgwL2VtYmVkL3ZpZGVv');
 
     // Block right-click everywhere
-    document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+    document.addEventListener('contextmenu', e => e.preventDefault());
+
+    // Block text selection
+    document.addEventListener('selectstart', e => e.preventDefault());
 
     // Clock
     function updateClock() {
-      try {
-        document.getElementById('clock').textContent =
-          new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-      } catch(e) {}
+      document.getElementById('clock').textContent =
+        new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     }
     updateClock();
     setInterval(updateClock, 1000);
 
     // Show player page
     function showPlayer() {
-      try {
-        document.getElementById('streamFrame').src = _e;
-        document.getElementById('landingPage').classList.add('hidden');
-        document.getElementById('playerPage').classList.remove('hidden');
-        ['cornerTL','cornerTR','cornerBL'].forEach(function(id) {
-          document.getElementById(id).style.display = 'none';
-        });
-        try { history.pushState({ page: 'player' }, '', '#watch'); } catch(e) {}
-      } catch(err) {
-        console.log('showPlayer error:', err);
-      }
+      // Load iframe only when user clicks
+      document.getElementById('streamFrame').src = _e;
+      document.getElementById('landingPage').classList.add('hidden');
+      document.getElementById('playerPage').classList.remove('hidden');
+      // Hide corners
+      ['cornerTL','cornerTR','cornerBL'].forEach(id => {
+        document.getElementById(id).style.display = 'none';
+      });
+      // Prevent browser back button from revealing URL
+      history.pushState({ page: 'player' }, '', '#watch');
     }
 
     // Show landing page
     function showLanding() {
-      try {
-        document.getElementById('streamFrame').src = '';
-        document.getElementById('playerPage').classList.add('hidden');
-        document.getElementById('landingPage').classList.remove('hidden');
-        ['cornerTL','cornerTR','cornerBL'].forEach(function(id) {
-          document.getElementById(id).style.display = '';
-        });
-        try { history.pushState({ page: 'landing' }, '', window.location.pathname); } catch(e) {}
-      } catch(err) {
-        console.log('showLanding error:', err);
-      }
+      // Unload iframe to stop stream
+      document.getElementById('streamFrame').src = '';
+      document.getElementById('playerPage').classList.add('hidden');
+      document.getElementById('landingPage').classList.remove('hidden');
+      // Restore corners
+      ['cornerTL','cornerTR','cornerBL'].forEach(id => {
+        document.getElementById(id).style.display = '';
+      });
+      history.pushState({ page: 'landing' }, '', window.location.pathname);
     }
 
     // Handle browser back button
-    window.addEventListener('popstate', function() {
-      if (!document.getElementById('playerPage').classList.contains('hidden')) {
+    window.addEventListener('popstate', (e) => {
+      if (document.getElementById('playerPage').classList.contains('hidden') === false) {
         showLanding();
       }
     });
