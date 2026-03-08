@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
   <meta name="theme-color" content="#080808"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
@@ -22,21 +22,38 @@
       width: 100%;
       min-height: 100vh;
       min-height: 100dvh;
-    }
-
-    body {
       background: var(--bg);
       color: var(--text);
       font-family: 'DM Sans', sans-serif;
+      overflow-x: hidden;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    /* ===================== */
+    /*   PAGE SYSTEM         */
+    /* ===================== */
+    .page {
+      position: fixed;
+      inset: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      overflow-x: hidden;
+      transition: opacity 0.4s ease, transform 0.4s ease;
       padding: 24px 16px;
     }
 
-    body::before {
+    .page.hidden {
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.97);
+    }
+
+    /* ===================== */
+    /*   LANDING PAGE        */
+    /* ===================== */
+    #landingPage::before {
       content: '';
       position: fixed;
       width: min(600px, 100vw);
@@ -50,21 +67,11 @@
     }
 
     @keyframes breathe {
-      0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
-      50%       { opacity: 1; transform: translate(-50%, -50%) scale(1.15); }
+      0%, 100% { opacity: 0.5; transform: translate(-50%,-50%) scale(1); }
+      50%       { opacity: 1;   transform: translate(-50%,-50%) scale(1.15); }
     }
 
-    body::after {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-      pointer-events: none;
-      opacity: 0.4;
-      z-index: 0;
-    }
-
-    .container {
+    .landing-inner {
       position: relative;
       z-index: 10;
       display: flex;
@@ -85,11 +92,9 @@
       font-family: 'Bebas Neue', sans-serif;
       font-size: clamp(56px, 18vw, 96px);
       letter-spacing: 0.08em;
-      color: var(--text);
       line-height: 1;
       text-align: center;
     }
-
     .brand span { color: var(--red); }
 
     .tagline {
@@ -99,7 +104,6 @@
       text-transform: uppercase;
       text-align: center;
       margin-top: -18px;
-      padding: 0 8px;
     }
 
     .divider {
@@ -108,6 +112,7 @@
       background: linear-gradient(to bottom, transparent, var(--muted), transparent);
     }
 
+    /* LIVE BUTTON */
     .live-btn {
       position: relative;
       display: inline-flex;
@@ -117,17 +122,18 @@
       padding: clamp(18px, 4.5vw, 22px) clamp(40px, 12vw, 60px);
       background: var(--red);
       color: #fff;
-      text-decoration: none;
       font-family: 'Bebas Neue', sans-serif;
       font-size: clamp(28px, 8vw, 34px);
       letter-spacing: 0.15em;
       border-radius: 6px;
+      border: none;
       cursor: pointer;
       width: min(300px, 80vw);
-      transition: background 0.2s, transform 0.15s;
+      outline: none;
+      -webkit-appearance: none;
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
-      user-select: none;
+      transition: background 0.2s, transform 0.15s;
       animation: pulse-shadow 2s ease-in-out infinite;
     }
 
@@ -171,7 +177,6 @@
       width: 100%; height: 100%;
       animation: ripple 2s ease-out infinite;
     }
-
     .live-dot::after { animation-delay: 0.65s; }
 
     @keyframes ripple {
@@ -187,7 +192,6 @@
       letter-spacing: 0.12em;
       color: var(--muted);
       text-transform: uppercase;
-      text-align: center;
     }
 
     .status-dot {
@@ -210,19 +214,16 @@
       background: rgba(255,255,255,0.04);
       border: 1px solid rgba(255,255,255,0.07);
       border-radius: 100px;
-      padding: clamp(6px, 1.5vw, 8px) clamp(12px, 3vw, 16px);
+      padding: clamp(6px,1.5vw,8px) clamp(12px,3vw,16px);
       font-size: clamp(10px, 2.4vw, 12px);
       letter-spacing: 0.1em;
       color: #666;
       text-transform: uppercase;
     }
 
-    .viewer-badge svg {
-      width: 13px; height: 13px;
-      fill: #666;
-      flex-shrink: 0;
-    }
+    .viewer-badge svg { width: 13px; height: 13px; fill: #666; flex-shrink: 0; }
 
+    /* Corner labels */
     .corner {
       position: fixed;
       font-size: 10px;
@@ -237,34 +238,168 @@
     .corner.bl { bottom: 18px; left: 20px; }
     .corner.br { bottom: 18px; right: 20px; }
 
-    /* Reset button styles */
-    .live-btn {
-      border: none;
-      outline: none;
-      -webkit-appearance: none;
-      appearance: none;
-    }
-    @media (min-width: 600px) {
-      .container { max-width: 560px; }
-      .live-btn { width: min(340px, 70vw); }
+    /* ===================== */
+    /*   PLAYER PAGE         */
+    /* ===================== */
+    #playerPage {
+      background: #000;
+      padding: 0;
+      justify-content: flex-start;
     }
 
-    /* Desktop */
-    @media (min-width: 1024px) {
-      .container { max-width: 640px; }
-      .live-btn { width: min(380px, 60vw); }
+    .player-header {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: #0d0d0d;
+      border-bottom: 1px solid #1a1a1a;
+      flex-shrink: 0;
+      z-index: 10;
+    }
+
+    .player-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(18px, 5vw, 24px);
+      letter-spacing: 0.1em;
+      color: var(--text);
+    }
+
+    .player-title .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--red);
+      animation: blink 1.2s step-start infinite;
+      flex-shrink: 0;
+    }
+
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px;
+      color: #aaa;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      padding: 7px 12px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      transition: background 0.2s;
+      text-transform: uppercase;
+    }
+    .back-btn:hover  { background: rgba(255,255,255,0.1); }
+    .back-btn:active { background: rgba(255,255,255,0.04); }
+    .back-btn svg { width: 14px; height: 14px; fill: #aaa; }
+
+    /* Video wrapper */
+    .video-wrapper {
+      width: 100%;
+      position: relative;
+      background: #000;
+      flex-shrink: 0;
+    }
+
+    /* 16:9 aspect ratio */
+    .video-wrapper::before {
+      content: '';
+      display: block;
+      padding-top: 56.25%;
+    }
+
+    .video-wrapper iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+      pointer-events: all;
+    }
+
+    /* Overlay to block right-click on iframe */
+    .iframe-shield {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      background: transparent;
+      pointer-events: none;
+    }
+
+    /* Stream info below video */
+    .stream-info {
+      width: 100%;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: #0a0a0a;
+      border-top: 1px solid #1a1a1a;
+    }
+
+    .stream-info-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(20px, 5vw, 26px);
+      letter-spacing: 0.06em;
+      color: var(--text);
+    }
+
+    .stream-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--red);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 3px 9px;
+      border-radius: 3px;
+    }
+
+    .live-badge-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: #fff;
+      animation: blink 1.2s step-start infinite;
+    }
+
+    .stream-meta-text {
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+
+    /* Tablet / Desktop — side by side */
+    @media (min-width: 768px) {
+      #playerPage { flex-direction: column; }
+      .video-wrapper { max-width: 900px; margin: 0 auto; width: 100%; }
+      .stream-info { max-width: 900px; margin: 0 auto; width: 100%; border-radius: 0 0 8px 8px; }
     }
 
     /* Very small phones */
     @media (max-width: 360px) {
       .corner { display: none; }
-      .container { gap: 20px; }
       .live-btn { width: 88vw; }
     }
 
     /* Landscape mobile */
     @media (max-height: 500px) and (orientation: landscape) {
-      .container { gap: 14px; }
+      .landing-inner { gap: 14px; }
       .divider { height: 16px; }
       .brand { font-size: 42px; }
       .corner.bl, .corner.br { display: none; }
@@ -273,69 +408,138 @@
 </head>
 <body>
 
-  <span class="corner tl">Stream v1.0</span>
-  <span class="corner tr">HD · 1080p</span>
-  <span class="corner bl">Owncast</span>
+  <!-- Corner labels (landing only) -->
+  <span class="corner tl" id="cornerTL">Stream v1.0</span>
+  <span class="corner tr" id="cornerTR">HD · 1080p</span>
+  <span class="corner bl" id="cornerBL">Owncast</span>
   <span class="corner br" id="clock"></span>
 
-  <div class="container">
-    <div>
-      <div class="brand">Watch <span>Live</span></div>
-      <div class="tagline">Live Broadcast — Join Now</div>
-    </div>
+  <!-- ==================== -->
+  <!-- LANDING PAGE         -->
+  <!-- ==================== -->
+  <div class="page" id="landingPage">
+    <div class="landing-inner">
+      <div>
+        <div class="brand">Watch <span>Live</span></div>
+        <div class="tagline">Live Broadcast — Join Now</div>
+      </div>
 
-    <div class="divider"></div>
+      <div class="divider"></div>
 
-    <button class="live-btn" id="liveBtn" onclick="goLive()"
-      oncontextmenu="return false"
-      ontouchstart="startHold(event)"
-      ontouchend="cancelHold()"
-      ontouchmove="cancelHold()">
-      <span class="live-dot"></span>
-      LIVE
-    </button>
+      <button class="live-btn" id="liveBtn" onclick="showPlayer()">
+        <span class="live-dot"></span>
+        LIVE
+      </button>
 
-    <div class="status">
-      <span class="status-dot"></span>
-      Stream is live · Tap to watch
-    </div>
+      <div class="status">
+        <span class="status-dot"></span>
+        Stream is live · Tap to watch
+      </div>
 
-    <div class="viewer-badge">
-      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
-      </svg>
-      Open to all viewers
+      <div class="viewer-badge">
+        <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+        Open to all viewers
+      </div>
     </div>
   </div>
 
+  <!-- ==================== -->
+  <!-- PLAYER PAGE          -->
+  <!-- ==================== -->
+  <div class="page hidden" id="playerPage">
+
+    <div class="player-header">
+      <div class="player-title">
+        <span class="dot"></span>
+        LIVE NOW
+      </div>
+      <button class="back-btn" onclick="showLanding()">
+        <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        Back
+      </button>
+    </div>
+
+    <div class="video-wrapper">
+      <iframe
+        id="streamFrame"
+        src=""
+        allowfullscreen
+        allow="autoplay; fullscreen"
+        scrolling="no">
+      </iframe>
+      <div class="iframe-shield"></div>
+    </div>
+
+    <div class="stream-info">
+      <div class="stream-info-title">Live Broadcast</div>
+      <div class="stream-meta">
+        <span class="live-badge">
+          <span class="live-badge-dot"></span>
+          Live
+        </span>
+        <span class="stream-meta-text">Streaming now · Watch only on this page</span>
+      </div>
+    </div>
+
+  </div>
+
   <script>
+    // Stream embed URL split to avoid easy detection
+    const _p1 = 'http://139.180.';
+    const _p2 = '156.116:8080';
+    const _p3 = '/embed/video';
+    const _e = _p1 + _p2 + _p3;
+
+    // Block right-click everywhere
+    document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+
     // Clock
     function updateClock() {
-      document.getElementById('clock').textContent =
-        new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      try {
+        document.getElementById('clock').textContent =
+          new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      } catch(e) {}
     }
     updateClock();
     setInterval(updateClock, 1000);
 
-    // Hidden stream URL — not visible in HTML source easily
-    const _s = atob('aHR0cDovLzEzOS4xODAuMTU2LjExNjo4MDgw');
-
-    // Block right-click everywhere
-    document.addEventListener('contextmenu', e => e.preventDefault());
-
-    // Block long press showing link
-    let holdTimer;
-    function startHold(e) {
-      holdTimer = setTimeout(() => e.preventDefault(), 300);
+    // Show player page
+    function showPlayer() {
+      try {
+        document.getElementById('streamFrame').src = _e;
+        document.getElementById('landingPage').classList.add('hidden');
+        document.getElementById('playerPage').classList.remove('hidden');
+        ['cornerTL','cornerTR','cornerBL'].forEach(function(id) {
+          document.getElementById(id).style.display = 'none';
+        });
+        try { history.pushState({ page: 'player' }, '', '#watch'); } catch(e) {}
+      } catch(err) {
+        console.log('showPlayer error:', err);
+      }
     }
-    function cancelHold() {
-      clearTimeout(holdTimer);
+
+    // Show landing page
+    function showLanding() {
+      try {
+        document.getElementById('streamFrame').src = '';
+        document.getElementById('playerPage').classList.add('hidden');
+        document.getElementById('landingPage').classList.remove('hidden');
+        ['cornerTL','cornerTR','cornerBL'].forEach(function(id) {
+          document.getElementById(id).style.display = '';
+        });
+        try { history.pushState({ page: 'landing' }, '', window.location.pathname); } catch(e) {}
+      } catch(err) {
+        console.log('showLanding error:', err);
+      }
     }
 
-    // Navigate on click
-    function goLive() {
-      window.open(_s, '_blank', 'noopener');
-    }
+    // Handle browser back button
+    window.addEventListener('popstate', function() {
+      if (!document.getElementById('playerPage').classList.contains('hidden')) {
+        showLanding();
+      }
+    });
   </script>
+
 </body>
 </html>
